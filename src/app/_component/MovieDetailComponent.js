@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { DarkRating, RatingBlack } from "../icons/icons";
-import { useRouter } from "next/navigation";
 
 export const MovieDetailGg = (props) => {
   const {
@@ -13,6 +12,7 @@ export const MovieDetailGg = (props) => {
     runtime,
     trailerUrl,
     backdrop,
+    genre,
   } = props;
 
   const [darkMode, setDarkMode] = useState(false);
@@ -64,14 +64,14 @@ export const MovieDetailGg = (props) => {
         />
 
         {trailerUrl ? (
-          <div className="w-full max-w-[760px] h-[220px] sm:h-[428px] rounded-xl overflow-hidden">
+          <div className="w-full max-w-[760px] h-[220px] sm:h-[428px] rounded-xl overflow-hidden ">
             <iframe
               src={trailerUrl}
               title="Movie Trailer"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              className="w-full h-full"
+              className="w-full h-full "
             ></iframe>
           </div>
         ) : (
@@ -87,6 +87,37 @@ export const MovieDetailGg = (props) => {
         <p className="font-normal text-[14px] sm:text-[16px] leading-relaxed text-center max-w-[1080px] ">
           {overview}
         </p>
+      </div>
+
+      <div className="pt-4 flex justify-center gap-2 flex-wrap max-w-[600px] mx-auto">
+        {genre && typeof genre === "string" ? (
+          genre.split(" · ").map((name, idx) => (
+            <span
+              key={idx}
+              className="inline-block rounded-[8px] px-3 text-sm font-semibold border border-gray-500 hover:bg-gray-500 cursor-pointer"
+              style={{
+                height: "20px",
+                lineHeight: "20px",
+                minWidth: "50px",
+                textAlign: "center",
+              }}
+            >
+              {name}
+            </span>
+          ))
+        ) : (
+          <span
+            className="inline-block text-gray-600 rounded-[8px] px-3 text-sm font-semibold border border-gray-400 hover:bg-gray-500 cursor-pointer"
+            style={{
+              height: "20px",
+              lineHeight: "20px",
+              minWidth: "50px",
+              textAlign: "center",
+            }}
+          >
+            Unknown
+          </span>
+        )}
       </div>
     </div>
   );

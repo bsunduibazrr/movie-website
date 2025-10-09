@@ -4,9 +4,8 @@ import { FooterSection } from "../_features/FooterSection";
 import { NavbarSection } from "../_features/NavbarSection";
 import { LoadingSection } from "../_features/LoadingSection";
 import { TitleSortPopular } from "../_component/TitleSortComponentPopular";
-import { MovieCard } from "../_component/MovieSlideComponent";
 import { NextPreviousComponentPopular } from "../_component/NextPreviousComponentPopular";
-import { NextIcon } from "../icons/icons";
+
 const apiLink =
   "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1";
 const options = {

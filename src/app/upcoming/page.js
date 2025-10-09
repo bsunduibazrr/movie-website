@@ -4,10 +4,8 @@ import { FooterSection } from "../_features/FooterSection";
 import { NavbarSection } from "../_features/NavbarSection";
 import { LoadingSection } from "../_features/LoadingSection";
 import { TitleSortUpcoming } from "../_component/TitleSortComponentUpcoming";
-import { MovieCard } from "../_component/MovieSlideComponent";
 import { NextPreviousComponentUpcoming } from "../_component/NextPreviousComponentUpcoming";
-import { DarkGenre } from "../icons/icons";
-import { darkMode } from "../tailwind.config";
+
 const apiLink =
   "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1";
 const options = {
@@ -45,7 +43,7 @@ export default function Home() {
       setDarkMode(false);
       document.documentElement.classList.remove("dark");
     }
-  }, []);
+  }, [getData]);
 
   const toggleDarkMode = () => {
     if (darkMode) {

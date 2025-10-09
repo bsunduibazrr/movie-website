@@ -4,10 +4,8 @@ import { FooterSection } from "../_features/FooterSection";
 import { NavbarSection } from "../_features/NavbarSection";
 import { LoadingSection } from "../_features/LoadingSection";
 import { TitleSortToprated } from "../_component/TitleSortComponentToprated";
-import { MovieCard } from "../_component/MovieSlideComponent";
-import { NextPreviousComponent } from "../_component/NextPreviousComponentUpcoming";
+
 import { NextPreviousComponentToprated } from "../_component/NextPreviousComponentToprated";
-import { NextIcon2 } from "../icons/icons";
 
 const API_BASE = "https://api.themoviedb.org/3/movie/top_rated";
 const options = {
@@ -49,7 +47,7 @@ export default function Home() {
   }
 
   return (
-    <div className="w-[1440px] m-auto">
+    <div className="w-[1440px] m-auto mx-auto px-4 max-sm:w-[375px]">
       <NavbarSection />
 
       <div className="pt-[52px]">

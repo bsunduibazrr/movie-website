@@ -2,8 +2,8 @@ import { EmailIcon, LastIcon, PhoneIcon } from "../icons/icons";
 
 export const FooterSection = () => {
   return (
-    <div className="pt-12">
-      <div className="bg-[#4338CA] w-full max-sm:w-[375px]">
+    <div className="pt-12 flex justify-center">
+      <div className="bg-[#4338CA] w-[1440px] max-sm:w-[375px]">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
           <div>
             <LastIcon />

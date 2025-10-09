@@ -96,7 +96,7 @@ export const MovieScrollSection = () => {
 
         {activeTrailerId === currentMovie.id && sliderMovieTrailer && (
           <div className="absolute top-0 left-0 w-full h-full bg-black/90 z-50 flex items-center justify-center max-sm:w-[375px] ">
-            <div className="w-full max-w-[1280px] aspect-video relative px-4 sm:px-0 max-sm:top-[20px]">
+            <div className="w-full max-w-[1280px]  top-[80px] left-[200px] aspect-video relative px-4 sm:px-0 max-sm:top-[20px] max-sm:left-0">
               <iframe
                 src={`https://www.youtube.com/embed/${sliderMovieTrailer}?autoplay=1`}
                 title="YouTube trailer"
@@ -111,7 +111,7 @@ export const MovieScrollSection = () => {
                   setActiveTrailerId(null);
                   setSliderMovieTrailer(null);
                 }}
-                className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded p-2 text-sm font-bold z-50"
+                className="absolute top-15 left-0 bg-red-600 hover:bg-red-700 text-white rounded p-2 text-sm font-bold z-50 max-sm:top-2 max-sm:left-0 max-sm:w-[30px] max-sm:h-[30px]"
                 aria-label="Close Trailer"
               >
                 ✕

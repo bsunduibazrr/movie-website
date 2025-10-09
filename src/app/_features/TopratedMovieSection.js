@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { TitleSort } from "../_component/TitleSortComponentPopular";
 import { MovieCard } from "../_component/MovieSlideComponent";
 import { LoadingSection } from "./LoadingSection";
 import { TitleSortToprated } from "../_component/TitleSortComponentToprated";
@@ -22,10 +21,14 @@ export const TopratedMovieSection = () => {
 
   const getData = async () => {
     setLoading(true);
-    const data = await fetch(apiLink, options);
-    const jsonData = await data.json();
-    setTopratedMoviesData(jsonData.results.slice(0, 10));
-
+    try {
+      const data = await fetch(apiLink, options);
+      const jsonData = await data.json();
+      setTopratedMoviesData(jsonData.results);
+    } catch (error) {
+      console.error("Failed to fetch upcoming movies:", error);
+      setTopratedMoviesData([]);
+    }
     setLoading(false);
   };
 
@@ -45,13 +48,13 @@ export const TopratedMovieSection = () => {
   }
 
   return (
-    <div>
+    <div className="w-full px-0 max-sm:w-full max-sm:px-0">
       <TitleSortToprated
         title={"Top Rated"}
         seemore={"See More"}
         icon={<NextIcon2 />}
       />
-      <div className="pt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 justify-items-start">
+      <div className="pt-[32px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-sm:gap-[4px] max-sm:px-0">
         {topratedMoviesData.slice(0, 10).map((movie) => (
           <MovieCard
             movieId={movie.id}

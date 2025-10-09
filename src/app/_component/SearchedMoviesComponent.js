@@ -1,16 +1,9 @@
 "use client";
 import React from "react";
-import { LastRating, NextIcon2 } from "../icons/icons";
+import { NextIcon2, RatingIcon } from "../icons/icons";
 import { useRouter } from "next/navigation";
 
-export const SearchedMoviesCard = ({
-  title,
-  image,
-  date,
-  movieId,
-  onClick,
-  movie,
-}) => {
+export const SearchedMoviesCard = ({ title, image, date, movieId }) => {
   const router = useRouter();
 
   const handleMovieClick = () => {
@@ -20,7 +13,7 @@ export const SearchedMoviesCard = ({
   return (
     <li
       onClick={handleMovieClick}
-      className="flex items-start sm:items-center gap-3 sm:gap-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded transition-all w-full max-sm:w-[330px]"
+      className="flex gap-3 sm:gap-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded transition-all w-full max-w-[375px] sm:max-w-full max-sm:pt-[10px]"
     >
       <img
         src={image}
@@ -29,19 +22,20 @@ export const SearchedMoviesCard = ({
       />
 
       <div className="flex flex-col justify-between w-full">
-        <p className="font-semibold text-base sm:text-[20px] text-gray-900 dark:text-white line-clamp-2">
+        <p className="font-semibold text-sm sm:text-base md:text-[20px] text-gray-900 dark:text-white line-clamp-2">
           {title}
         </p>
 
         <div className="mt-1 mb-2 sm:my-2">
-          <LastRating />
+          <RatingIcon />
         </div>
 
-        <div className="flex justify-between items-center">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+        <div className="flex justify-between items-center flex-wrap sm:flex-nowrap gap-2 text-sm max-sm:justify-start max-sm:px-0 max-sm:gap-20">
+          <p className="text-gray-600 dark:text-gray-300 text-[13px] sm:text-sm font-medium">
             {date}
           </p>
-          <div className="flex items-center gap-[3px] text-sm font-medium text-blue-600 dark:text-white">
+
+          <div className="flex items-center gap-1 text-blue-600 dark:text-white font-medium">
             <span>See More</span>
             <NextIcon2 />
           </div>

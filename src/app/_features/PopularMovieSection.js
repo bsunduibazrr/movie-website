@@ -1,12 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  TitleSort,
-  TitleSortPopular,
-} from "../_component/TitleSortComponentPopular";
+import { TitleSortPopular } from "../_component/TitleSortComponentPopular";
 import { MovieCard } from "../_component/MovieSlideComponent";
 import { LoadingSection } from "./LoadingSection";
-import { NextIcon, NextIcon2 } from "../icons/icons";
+import { NextIcon2 } from "../icons/icons";
 const apiLink =
   "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1";
 const options = {

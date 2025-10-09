@@ -7,7 +7,14 @@ module.exports = {
     "./_features/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        "max-xs": { max: "375px" },
+      },
+      images: {
+        domains: ["example.com", "image.tmdb.org"],
+      },
+    },
   },
   plugins: [],
 };

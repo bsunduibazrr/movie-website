@@ -1,8 +1,6 @@
+"use client";
 import { useState, useEffect } from "react";
-import { RatingBlack } from "../icons/icons";
 import Link from "next/link";
-
-const MOVIES_PER_PAGE = 20;
 
 const API_HEADERS = {
   accept: "application/json",
@@ -11,62 +9,28 @@ const API_HEADERS = {
 };
 
 export const NextPreviousComponentToprated = () => {
-  const [allMovies, setAllMovies] = useState([]);
-  const [page, setPage] = useState(1);
   const [displayedMovies, setDisplayedMovies] = useState([]);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchAllMovies = async () => {
+  const fetchMoviesByPage = async (pageNum) => {
     try {
-      const firstResponse = await fetch(
-        `https://api.themoviedb.org/3/movie/toprated?language=en-US&page=1`,
+      const res = await fetch(
+        `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${pageNum}`,
         { headers: API_HEADERS }
       );
-
-      if (!firstResponse.ok) {
-        throw new Error("Failed to fetch first page");
-      }
-
-      const firstData = await firstResponse.json();
-      let allResults = firstData.results || [];
-      const totalApiPages = firstData.total_pages;
-
-      const totalToFetch = Math.min(totalApiPages, 73);
-
-      const fetchPromises = [];
-      for (let i = 2; i <= totalToFetch; i++) {
-        fetchPromises.push(
-          fetch(
-            `https://api.themoviedb.org/3/movie/toprated?language=en-US&page=${i}`,
-            { headers: API_HEADERS }
-          ).then(async (res) => {
-            if (!res.ok) throw new Error(`Failed to fetch page ${i}`);
-            return res.json();
-          })
-        );
-      }
-
-      const results = await Promise.all(fetchPromises);
-      results.forEach((res) => {
-        allResults = [...allResults, ...(res.results || [])];
-      });
-
-      setAllMovies(allResults);
-      setTotalPages(Math.ceil(allResults.length / MOVIES_PER_PAGE));
+      if (!res.ok) throw new Error("Failed to fetch movies");
+      const data = await res.json();
+      setDisplayedMovies(data.results || []);
+      setTotalPages(data.total_pages);
     } catch (error) {
-      console.error("Error fetching movies:", error.message);
+      console.error("Fetch error:", error.message);
     }
   };
 
   useEffect(() => {
-    fetchAllMovies();
-  }, []);
-
-  useEffect(() => {
-    const startIndex = (page - 1) * MOVIES_PER_PAGE;
-    const endIndex = startIndex + MOVIES_PER_PAGE;
-    setDisplayedMovies(allMovies.slice(startIndex, endIndex));
-  }, [allMovies, page]);
+    fetchMoviesByPage(page);
+  }, [page]);
 
   const handlePageClick = (num) => setPage(num);
   const handlePrevious = () => page > 1 && setPage(page - 1);
@@ -98,18 +62,18 @@ export const NextPreviousComponentToprated = () => {
 
   return (
     <div className="p-6">
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-5 gap-4 mb-6 max-sm:grid max-sm:grid-cols-2">
         {displayedMovies.map((movie) => (
           <div
             key={movie.id}
-            className="w-full max-w-[230px] sm:max-w-[230px] max-sm:max-w-[158px] grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6"
+            className="w-full max-w-[230px] sm:max-w-[230px] max-sm:max-w-[158px]"
           >
             {movie.poster_path ? (
               <Link href={`/movie-detail/${movie.id}`}>
                 <img
                   src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                   alt={movie.title}
-                  className="w-full h-[340px] max-sm:h-[250px] rounded-t-[8px] shadow-md object-cover hover:brightness-50 transition-all max-xs:grid grid-cols-2 max-sm:w-[375px]"
+                  className="w-full h-[340px] max-sm:h-[250px] rounded-t-[8px] shadow-md object-cover hover:brightness-50 transition-all max-xs:grid grid-cols-2 "
                 />
               </Link>
             ) : (
@@ -118,7 +82,7 @@ export const NextPreviousComponentToprated = () => {
               </div>
             )}
             <button className="w-full h-[135px] max-sm:h-[100px] rounded-b-[8px] px-2 py-2">
-              <RatingBlack />
+              {movie.vote_average}
               <p className="mt-2 text-[16px] max-sm:text-[14px] font-normal ">
                 {movie.title}
               </p>

@@ -111,14 +111,15 @@ export default function MoreLikeMovie() {
                   image={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
                   rating={movie.vote_average}
                   movieId={movie.id}
+                  vote={movie.vote_average}
                 />
               ))}
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-center md:justify-end gap-2 pt-8 px-4 sm:px-6 md:px-10">
+          <div className="flex justify-center sm:justify-end gap-2 pt-8 pr-4 sm:pr-9 flex-wrap">
             <button
-              className="px-4 h-[40px] border rounded bg-gray-100 dark:bg-[#27272a] dark:text-white  disabled:opacity-50"
+              className="w-[90px] h-[36px] text-sm sm:text-base cursor-pointer border rounded disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handlePrevious}
               disabled={page === 1}
             >
@@ -129,19 +130,17 @@ export default function MoreLikeMovie() {
               num === "..." ? (
                 <span
                   key={`dots-${index}`}
-                  className="w-[40px] h-[40px] flex items-center justify-center text-black dark:text-white"
+                  className="w-[36px] h-[36px] flex items-center justify-center text-sm"
                 >
                   ...
                 </span>
               ) : (
                 <button
                   key={num}
-                  className={`w-[40px] h-[40px] rounded ${
-                    page === num
-                      ? "bg-gray-400 font-bold text-white"
-                      : "bg-gray-100 dark:bg-[#27272a] dark:text-white"
+                  className={`w-[36px] h-[36px] text-sm rounded border ${
+                    page === num ? "bg-gray-400 font-bold text-white" : ""
                   }`}
-                  onClick={() => handlePageClick(Number(num))}
+                  onClick={() => handlePageClick(num)}
                 >
                   {num}
                 </button>
@@ -149,7 +148,7 @@ export default function MoreLikeMovie() {
             )}
 
             <button
-              className="px-4 h-[40px] border rounded bg-gray-100 dark:bg-[#27272a] dark:text-white disabled:opacity-50"
+              className="w-[80px] h-[36px] text-sm sm:text-base cursor-pointer border rounded disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleNext}
               disabled={page === totalPages}
             >

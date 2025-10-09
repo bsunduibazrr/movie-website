@@ -16,7 +16,8 @@ const options = {
   method: "GET",
   headers: {
     accept: "application/json",
-    Authorization: "Bearer YOUR_TOKEN_HERE",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NzZiMzEwNzJlZDg5ODcwMzQxM2Y0NzkyYzZjZTdjYyIsIm5iZiI6MTczODAyNjY5NS44NCwic3ViIjoiNjc5ODJlYzc3MDJmNDkyZjQ3OGY2OGUwIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.k4OF9yGrhA2gZ4VKCH7KLnNBB2LIf1Quo9c3lGF6toE",
   },
 };
 
@@ -26,7 +27,14 @@ export default function MovieDetail() {
   const id = params?.id;
 
   const [darkMode, setDarkMode] = useState(false);
+  const [movieData, setMovieData] = useState(null);
+  const [creditsData, setCreditsData] = useState(null);
+  const [videosData, setVideosData] = useState(null);
+  const [moreLikeThisMovies, setMoreLikeThisMovies] = useState([]);
+  const [loadingMoreLikeThis, setLoadingMoreLikeThis] = useState(false);
+  const [genresList, setGenresList] = useState([]);
 
+  // Dark mode toggle
   useEffect(() => {
     const savedMode = localStorage.getItem("darkMode");
     const isDark = savedMode === "true";
@@ -41,18 +49,14 @@ export default function MovieDetail() {
     localStorage.setItem("darkMode", newMode.toString());
   };
 
-  const [movieData, setMovieData] = useState(null);
-  const [creditsData, setCreditsData] = useState(null);
-  const [videosData, setVideosData] = useState(null);
-  const [moreLikeThisMovies, setMoreLikeThisMovies] = useState([]);
-  const [loadingMoreLikeThis, setLoadingMoreLikeThis] = useState(false);
-
+  // Reset data when id changes
   useEffect(() => {
     setMovieData(null);
     setCreditsData(null);
     setVideosData(null);
   }, [id]);
 
+  // Fetch movie, credits, trailer
   useEffect(() => {
     if (!id) return;
 
@@ -92,6 +96,27 @@ export default function MovieDetail() {
     fetchData();
   }, [id]);
 
+  // Fetch genres
+  useEffect(() => {
+    async function fetchGenres() {
+      try {
+        const res = await fetch(
+          "https://api.themoviedb.org/3/genre/movie/list?language=en",
+          options
+        );
+        if (!res.ok) throw new Error("Failed to fetch genres");
+        const data = await res.json();
+        setGenresList(data.genres || []);
+      } catch (error) {
+        console.error("Error fetching genres:", error);
+        setGenresList([]);
+      }
+    }
+
+    fetchGenres();
+  }, []);
+
+  // Fetch similar movies
   useEffect(() => {
     if (!movieData || !movieData.genres?.length) return;
 
@@ -117,6 +142,20 @@ export default function MovieDetail() {
 
     fetchMoreLikeThis();
   }, [movieData]);
+
+  const getGenreNames = (movieGenres) => {
+    if (!movieGenres || movieGenres.length === 0) return "Unknown";
+
+    const names = movieGenres
+      .map((genre) => {
+        if (typeof genre === "object" && genre.name) return genre.name;
+        const found = genresList.find((g) => g.id === genre);
+        return found ? found.name : null;
+      })
+      .filter(Boolean);
+
+    return names.length > 0 ? names.join(" · ") : "Unknown";
+  };
 
   if (!id) return <div>Invalid Movie ID</div>;
   if (!movieData || !creditsData || !videosData) return <LoadingDetail />;
@@ -150,6 +189,7 @@ export default function MovieDetail() {
         runtime={movieData.runtime}
         trailerUrl={trailerUrl}
         backdrop={`https://image.tmdb.org/t/p/w780${movieData.backdrop_path}`}
+        genre={getGenreNames(movieData.genres)}
       />
 
       <div className="flex justify-center px-4 sm:px-6 lg:px-12">

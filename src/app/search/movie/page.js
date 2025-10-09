@@ -143,7 +143,7 @@ export default function SearchMoviePage() {
         <div className="pt-4 sm:pt-6">
           <h2 className="text-lg sm:text-xl font-semibold">
             {totalResults} results for{" "}
-            <span className="text-blue-600">"{query}"</span>
+            <span className="text-blue-600">&quot;{query}&quot;</span>
           </h2>
         </div>
 
@@ -223,7 +223,7 @@ export default function SearchMoviePage() {
           </>
         ) : (
           <p className="mt-6 text-gray-500">
-            No results found for <strong>"{query}"</strong>
+            No results found for <strong>&quot;{query}&quot;</strong>
           </p>
         )}
       </div>

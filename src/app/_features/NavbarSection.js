@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   DarkGenre,
-  DarkRating,
   DarkSearch,
   DownIcon,
   FirstIcon,
   NightIcon,
+  ResponsiveGenre,
+  ResponsiveLightGenre,
   SearchIcon,
   SearchInput,
 } from "../icons/icons";
@@ -210,9 +211,7 @@ export const NavbarSection = () => {
       )
         .then((res) => res.json())
         .then((data) => {
-          if (data.genres) {
-            setGenres(data.genres);
-          }
+          if (data.genres) setGenres(data.genres);
         })
         .catch((err) => console.error("Genre fetch error:", err));
     }
@@ -274,31 +273,13 @@ export const NavbarSection = () => {
     );
   };
 
-  useEffect(() => {
-    const savedMode = localStorage.getItem("darkMode");
-    if (savedMode !== null) {
-      setDarkMode(savedMode === "true");
-    } else {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setDarkMode(prefersDark);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("darkMode", darkMode.toString());
-  }, [darkMode]);
-
   return (
     <div className="relative w-full flex flex-col items-center pt-3 z-50 max-sm:w-[375px]">
       <div className="w-full flex justify-around max-sm:justify-between items-center px-2">
-        <div className="max-sm:w-[92px] h-[20px] pt-[10px]">
+        <div
+          className="max-sm:w-[92px] h-[20px] pt-[10px] cursor-pointer"
+          onClick={() => router.push("/")}
+        >
           <FirstIcon />
         </div>
 
@@ -315,7 +296,6 @@ export const NavbarSection = () => {
               placeholder="Search movies..."
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              autoComplete="on"
             />
           </div>
         </div>
@@ -327,6 +307,12 @@ export const NavbarSection = () => {
           >
             {darkMode ? <DarkSearch /> : <SearchIcon />}
           </div>
+
+          {showMobileSearch && (
+            <div className="sm:hidden cursor-pointer" onClick={toggleGenres}>
+              {darkMode ? <ResponsiveGenre /> : <ResponsiveLightGenre />}
+            </div>
+          )}
 
           <div
             onClick={toggleDarkMode}
@@ -347,14 +333,13 @@ export const NavbarSection = () => {
               placeholder="Search movies..."
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              autoComplete="on"
             />
           </div>
         </div>
       )}
 
       {searchValue.trim() !== "" && (
-        <div className="absolute top-[64px] mt-2 w-[577px] max-h-[600px] overflow-y-auto bg-white dark:bg-black border shadow-md rounded-md p-4 z-50 max-sm:w-[330px]">
+        <div className="absolute top-[64px] mt-2 w-[577px] max-h-[600px] overflow-y-auto bg-white dark:bg-black border shadow-md rounded-md p-4 z-50 max-sm:w-[370px] max-sm:top-[100px]">
           {isLoading ? (
             <p className="text-sm text-gray-500 dark:text-gray-300">
               Searching...
@@ -375,6 +360,7 @@ export const NavbarSection = () => {
                     }
                     date={movie.release_date}
                     onClick={() => onMovieClick(movie)}
+                    vote={movie.vote_average}
                   />
                 ))}
               </ul>
@@ -394,7 +380,10 @@ export const NavbarSection = () => {
       )}
 
       {showGenres && (
-        <div className="absolute top-full left-[500px] w-[577px] h-[383px] rounded-lg dark:bg-black shadow-md border-t mt-2 py-4 px-8 overflow-auto z-50 max-sm:left-30">
+        <div
+          className="absolute top-full bg-white dark:bg-black left-[500px] w-[577px] h-[383px] rounded-lg shadow-md border-t mt-2 py-4 px-8 overflow-auto z-10
+          max-sm:left-0 max-sm:w-full max-sm:px-4 max-sm:h-auto max-sm:top-[60px]"
+        >
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-semibold dark:text-white">Genres</h1>
             <button
@@ -407,7 +396,7 @@ export const NavbarSection = () => {
           <p className="text-lg font-normal dark:text-gray-300">
             See lists of movies by genre
           </p>
-          <div className="w-full h-px bg-gray-200 dark:bg-black my-3"></div>
+          <div className="w-[100px]] h-[2px] dark:bg-[#f4f4f5] my-3"></div>
           <div className="flex flex-wrap gap-4 pt-2">
             {genres.map((genre) => (
               <div

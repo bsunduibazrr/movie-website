@@ -4,10 +4,8 @@ import { TitleSortUpcoming } from "../_component/TitleSortComponentUpcoming";
 import { MovieCard } from "../_component/MovieSlideComponent";
 import { LoadingSection } from "./LoadingSection";
 import { NextIcon2 } from "../icons/icons";
-
 const apiLink =
   "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1";
-
 const options = {
   method: "GET",
   headers: {
@@ -41,7 +39,6 @@ export const UpcomingMovieSection = () => {
   if (loading) {
     return <LoadingSection />;
   }
-
   if (!loading && (!upcomingMoviesData || upcomingMoviesData.length === 0)) {
     return (
       <div className="flex pt-9 justify-center text-[29px] font-bold text-red-600">
