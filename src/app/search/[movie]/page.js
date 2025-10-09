@@ -1,6 +1,7 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SeeAllSearched } from "@/app/_component/seeAllSearchedComponent";
 import { NavbarSection } from "@/app/_features/NavbarSection";
 import { FooterSection } from "@/app/_features/FooterSection";
@@ -15,91 +16,84 @@ const options = {
   },
 };
 
+function getParamsFromUrl() {
+  if (typeof window === "undefined") {
+    return { query: null, language: "en-US", page: 1 };
+  }
+  const search = window.location.search;
+  const paramsObj = {};
+  if (search.startsWith("?")) {
+    const queryString = search.substring(1);
+    const pairs = queryString.split("&");
+    for (const pair of pairs) {
+      const [key, value] = pair.split("=");
+      if (key) {
+        paramsObj[key] = decodeURIComponent(value || "");
+      }
+    }
+  }
+  return {
+    query: paramsObj.query || null,
+    language: paramsObj.language || "en-US",
+    page: parseInt(paramsObj.page) || 1,
+  };
+}
+
 export default function SearchMoviePage() {
+  const router = useRouter();
+
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-
   const [genres, setGenres] = useState([]);
 
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
-  const language = searchParams.get("language") || "en-US";
-  const pageFromParams = parseInt(searchParams.get("page") || "1", 10);
+  const [query, setQuery] = useState("");
+  const [language, setLanguage] = useState("en-US");
 
-  const router = useRouter();
-  const genreId = searchParams.get("genreId") || "";
-  const genreName = searchParams.get("genreName") || "Unknown Genre";
-
+  // URL-аас параметрүүдийг авна, параметр байхгүй бол / руу чиглүүлнэ
   useEffect(() => {
-    if (!query) {
+    if (typeof window === "undefined") return;
+
+    const { query: q, language: lang, page } = getParamsFromUrl();
+
+    if (!q) {
       router.push("/");
       return;
     }
-    setPage(pageFromParams);
-    fetchMovies(pageFromParams);
-  }, [query, language, pageFromParams]);
 
-  const fetchMovies = (pageNum) => {
+    setQuery(q);
+    setLanguage(lang);
+    setPageNum(page);
+
+    fetchMovies(q, lang, page);
+  }, [router]);
+
+  // Кино хайлт хийх API дуудаж өгөгдлийг хадгалах
+  const fetchMovies = async (searchQuery, lang, pageNumber) => {
     setLoading(true);
-    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-      query
-    )}&language=${language}&page=${pageNum}`;
-
-    fetch(url, options)
-      .then((res) => res.json())
-      .then((data) => {
-        setMovies(data.results || []);
-        setTotalPages(data.total_pages || 1);
-        setTotalResults(data.total_results || 0);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setLoading(false);
-      });
-  };
-
-  const getData = async () => {
-    if (!genreId) return;
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/discover/movie?language=en-US&with_genres=${genreId}&page=${page}`,
-        options
-      );
-      const jsonData = await response.json();
-      setMovies(jsonData.results || []);
-      setTotalPages(jsonData.total_pages || 1);
-      setTotalResults(jsonData.total_results || 0);
+      const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+        searchQuery
+      )}&language=${lang}&page=${pageNumber}`;
+
+      const res = await fetch(url, options);
+      const data = await res.json();
+      setMovies(data.results || []);
+      setTotalPages(data.total_pages || 1);
+      setTotalResults(data.total_results || 0);
     } catch (error) {
-      console.error("Error fetching movies:", error);
+      console.error("Fetch error:", error);
+      setMovies([]);
+      setTotalPages(1);
+      setTotalResults(0);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleNext = () => {
-    if (page < totalPages) {
-      const next = page + 1;
-      router.push(
-        `/search/movie?query=${encodeURIComponent(
-          query
-        )}&language=${language}&page=${next}`
-      );
-    }
-  };
-
-  const handlePrev = () => {
-    if (page > 1) {
-      const prev = page - 1;
-      router.push(
-        `/search/movie?query=${encodeURIComponent(
-          query
-        )}&language=${language}&page=${prev}`
-      );
-    }
-  };
-
+  // Жанрийн жагсаалт авах функц
   const fetchGenres = async () => {
     try {
       const response = await fetch(
@@ -112,19 +106,40 @@ export default function SearchMoviePage() {
       }
     } catch (error) {
       console.error("Genre fetch error:", error);
+      setGenres([]);
     }
   };
-
-  useEffect(() => {
-    getData();
-  }, [genreId, page]);
 
   useEffect(() => {
     fetchGenres();
   }, []);
 
+  // URL шинэчлэх функц, шинэ хуудас руу орохдоо ашиглана
+  const updateUrl = (newQuery, newLang, newPage) => {
+    const url = `/search/movie?query=${encodeURIComponent(
+      newQuery
+    )}&language=${newLang}&page=${newPage}`;
+    router.push(url);
+  };
+
+  // Хуудас урагшлах
+  const handleNext = () => {
+    if (pageNum < totalPages) {
+      const nextPage = pageNum + 1;
+      updateUrl(query, language, nextPage);
+    }
+  };
+
+  // Хуудас буцах
+  const handlePrev = () => {
+    if (pageNum > 1) {
+      const prevPage = pageNum - 1;
+      updateUrl(query, language, prevPage);
+    }
+  };
+
+  // Жанр дээр дарсан үед тухайн жанрын хуудас руу орох
   const onGenreClick = (genre) => {
-    setPage(1);
     router.push(
       `/genre/${genre.id}?genreId=${genre.id}&genreName=${encodeURIComponent(
         genre.name
@@ -135,6 +150,7 @@ export default function SearchMoviePage() {
   return (
     <div>
       <NavbarSection />
+
       <div className="pt-16 px-4 sm:px-6 lg:px-20 max-w-screen-2xl mx-auto">
         <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
           Search results
@@ -154,15 +170,7 @@ export default function SearchMoviePage() {
             <div className="flex flex-col lg:flex-row gap-10 pt-8">
               <div className="w-full">
                 <div
-                  className="
-                    grid
-                    grid-cols-2
-                    gap-4
-                    sm:grid-cols-3
-                    md:grid-cols-4
-                    lg:grid-cols-5
-                    mb-6
-                  "
+                  className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 mb-6"
                   style={{ rowGap: "1rem", columnGap: "1rem" }}
                 >
                   {movies.slice(0, 20).map((movie) => (
@@ -204,17 +212,17 @@ export default function SearchMoviePage() {
             <div className="flex justify-center lg:justify-end items-center gap-4 mt-6">
               <button
                 onClick={handlePrev}
-                disabled={page <= 1}
+                disabled={pageNum <= 1}
                 className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
               >
                 Previous ◀︎
               </button>
               <span>
-                Page {page} / {totalPages}
+                Page {pageNum} / {totalPages}
               </span>
               <button
                 onClick={handleNext}
-                disabled={page >= totalPages}
+                disabled={pageNum >= totalPages}
                 className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
               >
                 Next ▶︎
@@ -227,6 +235,7 @@ export default function SearchMoviePage() {
           </p>
         )}
       </div>
+
       <FooterSection />
     </div>
   );

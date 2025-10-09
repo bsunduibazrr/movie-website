@@ -1,7 +1,7 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { GenreMovieCard } from "@/app/_component/GenreMovieCardComponent";
 import { NavbarSection } from "@/app/_features/NavbarSection";
 import { FooterSection } from "@/app/_features/FooterSection";
@@ -15,61 +15,84 @@ const options = {
   },
 };
 
+function getQueryParams() {
+  if (typeof window === "undefined") return { genreId: null, genreName: "" };
+  const params = new URLSearchParams(window.location.search);
+  return {
+    genreId: params.get("genreId"),
+    genreName: params.get("genreName") || "Unknown Genre",
+  };
+}
+
 export default function GenreMoviesPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
 
-  const genreId = searchParams.get("genreId") || "";
-  const genreName = searchParams.get("genreName") || "Unknown Genre";
-
+  const [{ genreId, genreName }, setParams] = useState(() => getQueryParams());
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
   const [page, setPage] = useState(1);
 
-  const getData = async () => {
-    if (!genreId) return;
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/discover/movie?language=en-US&with_genres=${genreId}&page=${page}`,
-        options
-      );
-      const jsonData = await response.json();
-      setMovies(jsonData.results || []);
-    } catch (error) {
-      console.error("Error fetching movies:", error);
-    }
-  };
+  // Load query params on mount and on URL change (popstate)
+  useEffect(() => {
+    const onPopState = () => {
+      setParams(getQueryParams());
+      setPage(1); // Reset page on URL change
+    };
 
-  const fetchGenres = async () => {
-    try {
-      const response = await fetch(
-        "https://api.themoviedb.org/3/genre/movie/list?language=en-US",
-        options
-      );
-      const data = await response.json();
-      if (data.genres) {
-        setGenres(data.genres);
-      }
-    } catch (error) {
-      console.error("Genre fetch error:", error);
-    }
-  };
+    window.addEventListener("popstate", onPopState);
+
+    // initial load
+    setParams(getQueryParams());
+
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   useEffect(() => {
+    if (!genreId) return;
+
+    const getData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/discover/movie?language=en-US&with_genres=${genreId}&page=${page}`,
+          options
+        );
+        const jsonData = await response.json();
+        setMovies(jsonData.results || []);
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      }
+    };
+
     getData();
   }, [genreId, page]);
 
   useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await fetch(
+          "https://api.themoviedb.org/3/genre/movie/list?language=en-US",
+          options
+        );
+        const data = await response.json();
+        if (data.genres) {
+          setGenres(data.genres);
+        }
+      } catch (error) {
+        console.error("Genre fetch error:", error);
+      }
+    };
+
     fetchGenres();
   }, []);
 
   const onGenreClick = (genre) => {
     setPage(1);
-    router.push(
-      `/genre/${genre.id}?genreId=${genre.id}&genreName=${encodeURIComponent(
-        genre.name
-      )}`
-    );
+    // Push new URL without reload
+    const newUrl = `/genre/${genre.id}?genreId=${
+      genre.id
+    }&genreName=${encodeURIComponent(genre.name)}`;
+    window.history.pushState({}, "", newUrl);
+    setParams({ genreId: genre.id, genreName: genre.name });
   };
 
   return (

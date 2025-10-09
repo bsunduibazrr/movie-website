@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { RatingIcon } from "../icons/icons";
 
 const API_HEADERS = {
   accept: "application/json",
@@ -77,12 +78,12 @@ export const NextPreviousComponentToprated = () => {
                 />
               </Link>
             ) : (
-              <div className="w-full h-[340px] max-sm:h-[250px] bg-gray-300 items-center  rounded-t-[8px]">
+              <div className="w-full h-[340px] max-sm:h-[250px]  items-center  rounded-t-[8px]">
                 <span className="text-sm">No Image</span>
               </div>
             )}
-            <button className="w-full h-[135px] max-sm:h-[100px] rounded-b-[8px] px-2 py-2">
-              {movie.vote_average}
+            <button className="w-full h-[135px] max-sm:h-[100px] rounded-b-[8px] px-2 py-2 bg-[#f4f4f5] dark:bg-[#27272A]">
+              <RatingIcon />
               <p className="mt-2 text-[16px] max-sm:text-[14px] font-normal ">
                 {movie.title}
               </p>

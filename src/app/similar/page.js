@@ -1,10 +1,11 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { SeeAllSearched } from "@/app/_component/seeAllSearchedComponent";
 import { NavbarSection } from "@/app/_features/NavbarSection";
-import { MovieCard } from "@/app/_component/MovieSlideComponent";
-import { LoadingDetail } from "@/app/_features/LoadingSectionDetail";
+import { FooterSection } from "@/app/_features/FooterSection";
+import { LoadingSection } from "@/app/_features/LoadingSection";
 
 const options = {
   method: "GET",
@@ -15,102 +16,178 @@ const options = {
   },
 };
 
-export default function MoreLikeThis() {
-  const searchParams = useSearchParams();
-  const genreIds = searchParams.get("genres") || "";
+export default function MoreLikeThis({ params }) {
+  const { query, language = "en-US", page = "1" } = params;
 
   const [movies, setMovies] = useState([]);
-  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [pageNum, setPageNum] = useState(parseInt(page, 10));
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [totalResults, setTotalResults] = useState(0);
+  const [genres, setGenres] = useState([]);
+
+  const router = useRouter();
 
   useEffect(() => {
-    async function fetchMovies() {
-      if (!genreIds) return;
-
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `https://api.themoviedb.org/3/discover/movie/${id}/similar?language=en-US&page=1`,
-          options
-        );
-        if (!res.ok) throw new Error("Network error");
-        const data = await res.json();
-        setMovies(data.results || []);
-        setTotalPages(data.total_pages || 1);
-      } catch (error) {
-        console.error("MoreLikeThis fetch error:", error);
-        setMovies([]);
-      } finally {
-        setLoading(false);
-      }
+    if (!query) {
+      router.push("/");
+      return;
     }
 
-    fetchMovies();
-  }, [genreIds, page]);
+    setPageNum(parseInt(page, 10));
+    fetchMovies(parseInt(page, 10));
+  }, [query, language, page]);
+
+  const fetchMovies = async (pageNum) => {
+    setLoading(true);
+    try {
+      const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+        query
+      )}&language=${language}&page=${pageNum}`;
+
+      const res = await fetch(url, options);
+      const data = await res.json();
+      setMovies(data.results || []);
+      setTotalPages(data.total_pages || 1);
+      setTotalResults(data.total_results || 0);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchGenres = async () => {
+    try {
+      const response = await fetch(
+        "https://api.themoviedb.org/3/genre/movie/list?language=en-US",
+        options
+      );
+      const data = await response.json();
+      if (data.genres) {
+        setGenres(data.genres);
+      }
+    } catch (error) {
+      console.error("Genre fetch error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGenres();
+  }, []);
 
   const handleNext = () => {
-    if (page < totalPages) setPage((p) => p + 1);
+    if (pageNum < totalPages) {
+      const nextPage = pageNum + 1;
+      router.push(`/search/movie/${query}/${language}/${nextPage}`);
+    }
   };
 
   const handlePrev = () => {
-    if (page > 1) setPage((p) => p - 1);
+    if (pageNum > 1) {
+      const prevPage = pageNum - 1;
+      router.push(`/search/movie/${query}/${language}/${prevPage}`);
+    }
+  };
+
+  const onGenreClick = (genre) => {
+    router.push(
+      `/genre/${genre.id}?genreId=${genre.id}&genreName=${encodeURIComponent(
+        genre.name
+      )}`
+    );
   };
 
   return (
     <div>
       <NavbarSection />
-      <div className="px-6 py-6 max-w-7xl mx-auto">
-        <h1 className="font-semibold text-[24px] mb-4">More Like This</h1>
+
+      <div className="pt-16 px-4 sm:px-6 lg:px-20 max-w-screen-2xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+          Search results
+        </h1>
+
+        <div className="pt-4 sm:pt-6">
+          <h2 className="text-lg sm:text-xl font-semibold">
+            {totalResults} results for{" "}
+            <span className="text-blue-600">&quot;{query}&quot;</span>
+          </h2>
+        </div>
 
         {loading ? (
-          <LoadingDetail />
+          <LoadingSection />
         ) : movies.length > 0 ? (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {movies.map((movie) => (
-                <MovieCard
-                  key={movie.id}
-                  movie={movie}
-                  image={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-                  title={movie.title}
-                  rating={movie.vote_average}
-                />
-              ))}
+            <div className="flex flex-col lg:flex-row gap-10 pt-8">
+              <div className="w-full">
+                <div
+                  className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 mb-6"
+                  style={{ rowGap: "1rem", columnGap: "1rem" }}
+                >
+                  {movies.slice(0, 20).map((movie) => (
+                    <SeeAllSearched
+                      key={movie.id}
+                      movieId={movie.id}
+                      title={movie.title}
+                      image={
+                        movie.poster_path
+                          ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
+                          : "/placeholder.jpg"
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="hidden lg:block w-px bg-gray-200"></div>
+
+              <div className="lg:max-w-sm">
+                <h2 className="text-xl font-semibold mb-1">Search by genre</h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  See lists of movies by genre
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {genres.map((genre) => (
+                    <div
+                      key={genre.id}
+                      onClick={() => onGenreClick(genre)}
+                      className="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-1 text-sm font-medium cursor-pointer hover:bg-gray-500 transition-all"
+                    >
+                      {genre.name} ▶︎
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="flex justify-center items-center gap-6 mt-6">
+            <div className="flex justify-center lg:justify-end items-center gap-4 mt-6">
               <button
                 onClick={handlePrev}
-                disabled={page === 1}
-                className={`px-4 py-2 rounded border ${
-                  page === 1
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-200"
-                }`}
+                disabled={pageNum <= 1}
+                className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
               >
-                Prev
+                Previous ◀︎
               </button>
               <span>
-                Page {page} / {totalPages}
+                Page {pageNum} / {totalPages}
               </span>
               <button
                 onClick={handleNext}
-                disabled={page === totalPages}
-                className={`px-4 py-2 rounded border ${
-                  page === totalPages
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-200"
-                }`}
+                disabled={pageNum >= totalPages}
+                className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
               >
-                Next
+                Next ▶︎
               </button>
             </div>
           </>
         ) : (
-          <p>No movies found.</p>
+          <p className="mt-6 text-gray-500">
+            No results found for <strong>&quot;{query}&quot;</strong>
+          </p>
         )}
       </div>
+
+      <FooterSection />
     </div>
   );
 }

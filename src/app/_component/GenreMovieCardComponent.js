@@ -20,7 +20,7 @@ export const GenreMovieCard = ({ image, title, movieId, movie }) => {
         src={image}
         alt={title}
       />
-      <div className=" rounded-b-[8px] w-full h-[97px] max-sm:w-[157px]">
+      <div className=" rounded-b-[8px] w-full h-[97px] max-sm:w-[157px] bg-[#f4f4f5] dark:bg-[#27272A]">
         <div className="pt-[8px] pl-[8px]">
           <RatingIcon2 />
           <h3 className="font-normal text-[16px] truncate">{title}</h3>

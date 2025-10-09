@@ -35,7 +35,7 @@ export const SearchedMoviesCard = ({ title, image, date, movieId }) => {
             {date}
           </p>
 
-          <div className="flex items-center gap-1 text-blue-600 dark:text-white font-medium">
+          <div className="flex items-center gap-1 text-black dark:text-white font-medium">
             <span>See More</span>
             <NextIcon2 />
           </div>

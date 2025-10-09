@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const options = {
@@ -13,16 +12,30 @@ const options = {
 };
 
 export default function GenreMovies() {
-  const searchParams = useSearchParams();
-  const genreId = searchParams.get("genreId");
-  const genreName = searchParams.get("genreName");
-
+  const [genreId, setGenreId] = useState(null);
+  const [genreName, setGenreName] = useState("");
   const [genreMovies, setGenreMovies] = useState([]);
   const [isLoadingGenreMovies, setIsLoadingGenreMovies] = useState(false);
 
   useEffect(() => {
-    if (!genreId) return;
+    // client-side дээр ажиллах тул window байгаа эсэхийг шалгана
+    if (typeof window === "undefined") return;
 
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("genreId");
+    const name = params.get("genreName");
+
+    if (!id) {
+      setGenreId(null);
+      setGenreName("");
+      setGenreMovies([]);
+      return;
+    }
+
+    setGenreId(id);
+    setGenreName(name || "");
+
+    // genre-н киног дуудах функц
     const fetchAllGenreMovies = async () => {
       setIsLoadingGenreMovies(true);
       let allMovies = [];
@@ -32,7 +45,7 @@ export default function GenreMovies() {
       try {
         do {
           const res = await fetch(
-            `https://api.themoviedb.org/3/discover/movie?with_genres=${genreId}&language=en-US&page=${currentPage}`,
+            `https://api.themoviedb.org/3/discover/movie?with_genres=${id}&language=en-US&page=${currentPage}`,
             options
           );
           const data = await res.json();
@@ -54,7 +67,7 @@ export default function GenreMovies() {
     };
 
     fetchAllGenreMovies();
-  }, [genreId]);
+  }, [window.location.search]); // window.location.search өөрчлөгдөхөд ажиллана
 
   if (!genreId) {
     return <p className="p-6">Please select a genre.</p>;

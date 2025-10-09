@@ -34,7 +34,6 @@ export default function MovieDetail() {
   const [loadingMoreLikeThis, setLoadingMoreLikeThis] = useState(false);
   const [genresList, setGenresList] = useState([]);
 
-  // Dark mode toggle
   useEffect(() => {
     const savedMode = localStorage.getItem("darkMode");
     const isDark = savedMode === "true";
@@ -49,14 +48,12 @@ export default function MovieDetail() {
     localStorage.setItem("darkMode", newMode.toString());
   };
 
-  // Reset data when id changes
   useEffect(() => {
     setMovieData(null);
     setCreditsData(null);
     setVideosData(null);
   }, [id]);
 
-  // Fetch movie, credits, trailer
   useEffect(() => {
     if (!id) return;
 
@@ -96,7 +93,6 @@ export default function MovieDetail() {
     fetchData();
   }, [id]);
 
-  // Fetch genres
   useEffect(() => {
     async function fetchGenres() {
       try {
@@ -116,7 +112,6 @@ export default function MovieDetail() {
     fetchGenres();
   }, []);
 
-  // Fetch similar movies
   useEffect(() => {
     if (!movieData || !movieData.genres?.length) return;
 

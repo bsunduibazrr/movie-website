@@ -388,7 +388,7 @@ export const NavbarSection = () => {
             <h1 className="text-2xl font-semibold dark:text-white">Genres</h1>
             <button
               onClick={() => setShowGenres(false)}
-              className="text-3xl font-bold hover:text-red-500 cursor-pointer dark:text-white"
+              className="text-3xl font-bold hover:text-red-500 dark:hover:text-red-500 cursor-pointer dark:text-white"
             >
               ×
             </button>
@@ -402,7 +402,7 @@ export const NavbarSection = () => {
               <div
                 key={genre.id}
                 onClick={() => onGenreClick(genre)}
-                className="flex items-center gap-4 justify-center border border-gray-300 dark:border-gray-600 rounded-md text-sm text-black dark:text-white font-medium cursor-pointer hover:bg-red-400 dark:hover:bg-gray-500"
+                className="flex items-center gap-4 justify-center border border-gray-300 dark:border-gray-600 rounded-md text-sm text-black dark:text-white font-medium cursor-pointer hover:bg-gray-500 dark:hover:bg-gray-500"
                 style={{ width: 127, height: 20 }}
               >
                 {genre.name} ▶︎

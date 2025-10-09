@@ -16,13 +16,13 @@ export const MovieCard = ({ image, title, movieId }) => {
         className="flex justify-center sm:justify-start"
         onClick={handleMovieClick}
       >
-        <div className="cursor-pointer w-[150px] sm:w-[180px] md:w-[200px] lg:w-[230px]">
+        <div className="cursor-pointer w-[150px] sm:w-[180px] md:w-[200px] lg:w-[230px] max-sm:pt-[10px]">
           <img
             className="w-full h-[225px] sm:h-[260px] md:h-[300px] lg:h-[340px] rounded-t-[8px] object-cover hover:brightness-50 transition-opacity duration-300"
             src={image}
             alt={title}
           />
-          <div className="rounded-b-[8px] w-full h-[130px] px-2 pt-2">
+          <div className="rounded-b-[8px] w-full h-[110px] px-2 pt-2 bg-[#f4f4f5] dark:bg-[#27272A]">
             <div className="flex items-center gap-1 mb-1">
               <RatingIcon />
             </div>
