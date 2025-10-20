@@ -82,7 +82,7 @@ export const NextPreviousComponentUpcoming = () => {
                 <span className="text-sm">No Image</span>
               </div>
             )}
-            <button className="w-full h-[135px] max-sm:h-[100px] rounded-b-[8px] px-2 py-2 bg-[#f4f4f5] dark:bg-[#27272A]">
+            <button className="w-full min-h-[140px] max-sm:h-[100px] rounded-b-[8px] px-2 py-2 bg-[#f4f4f5] dark:bg-[#27272A]">
               <RatingIcon />
               <p className="mt-2 text-[16px] max-sm:text-[14px] font-normal ">
                 {movie.title}

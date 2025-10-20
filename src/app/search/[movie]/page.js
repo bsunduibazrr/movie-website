@@ -52,7 +52,6 @@ export default function SearchMoviePage() {
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState("en-US");
 
-  // URL-аас параметрүүдийг авна, параметр байхгүй бол / руу чиглүүлнэ
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -70,7 +69,6 @@ export default function SearchMoviePage() {
     fetchMovies(q, lang, page);
   }, [router]);
 
-  // Кино хайлт хийх API дуудаж өгөгдлийг хадгалах
   const fetchMovies = async (searchQuery, lang, pageNumber) => {
     setLoading(true);
     try {
@@ -93,7 +91,6 @@ export default function SearchMoviePage() {
     }
   };
 
-  // Жанрийн жагсаалт авах функц
   const fetchGenres = async () => {
     try {
       const response = await fetch(
@@ -114,7 +111,6 @@ export default function SearchMoviePage() {
     fetchGenres();
   }, []);
 
-  // URL шинэчлэх функц, шинэ хуудас руу орохдоо ашиглана
   const updateUrl = (newQuery, newLang, newPage) => {
     const url = `/search/movie?query=${encodeURIComponent(
       newQuery
@@ -122,7 +118,6 @@ export default function SearchMoviePage() {
     router.push(url);
   };
 
-  // Хуудас урагшлах
   const handleNext = () => {
     if (pageNum < totalPages) {
       const nextPage = pageNum + 1;
@@ -130,7 +125,6 @@ export default function SearchMoviePage() {
     }
   };
 
-  // Хуудас буцах
   const handlePrev = () => {
     if (pageNum > 1) {
       const prevPage = pageNum - 1;
@@ -138,7 +132,6 @@ export default function SearchMoviePage() {
     }
   };
 
-  // Жанр дээр дарсан үед тухайн жанрын хуудас руу орох
   const onGenreClick = (genre) => {
     router.push(
       `/genre/${genre.id}?genreId=${genre.id}&genreName=${encodeURIComponent(

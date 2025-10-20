@@ -402,8 +402,7 @@ export const NavbarSection = () => {
               <div
                 key={genre.id}
                 onClick={() => onGenreClick(genre)}
-                className="flex items-center gap-4 justify-center border border-gray-300 dark:border-gray-600 rounded-md text-sm text-black dark:text-white font-medium cursor-pointer hover:bg-gray-500 dark:hover:bg-gray-500"
-                style={{ width: 127, height: 20 }}
+                className="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-1 text-sm font-medium cursor-pointer hover:backdrop-brightness-50 transition-all dark:hover:bg-gray-500"
               >
                 {genre.name} ▶︎
               </div>

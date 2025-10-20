@@ -81,7 +81,7 @@ export const MovieScrollSection = () => {
   const currentMovie = nowPlayingMoviesData[currentIndex];
 
   return (
-    <div className="w-full flex flex-col items-center pt-6 px-4">
+    <div className="w-full flex flex-col items-center pt-6 ">
       <div className="w-full max-w-[1440px] h-[600px] flex items-center justify-start relative">
         <MovieScroll
           image={`https://image.tmdb.org/t/p/w1280${currentMovie.backdrop_path}`}

@@ -15,15 +15,15 @@ export const TitleSortToprated = (props) => {
         {title}
       </h3>
 
-      <div className="flex gap-1 items-center mt-2 sm:mt-0">
+      <div className="flex gap-1 items-center mt-2 sm:mt-0 cursor-pointer">
         <button
-          className="text-sm sm:text-base font-medium hover:underline"
+          className="text-sm sm:text-base font-medium hover:underline cursor-pointer"
           onClick={handleMovieClick}
         >
           {seemore}
         </button>
 
-        <button className="hover:underline">{icon}</button>
+        <button className="hover:underline cursor-pointer">{icon}</button>
       </div>
     </div>
   );

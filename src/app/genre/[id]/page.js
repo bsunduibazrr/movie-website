@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { GenreMovieCard } from "@/app/_component/GenreMovieCardComponent";
 import { NavbarSection } from "@/app/_features/NavbarSection";
 import { FooterSection } from "@/app/_features/FooterSection";
@@ -25,23 +24,49 @@ function getQueryParams() {
 }
 
 export default function GenreMoviesPage() {
-  const router = useRouter();
-
   const [{ genreId, genreName }, setParams] = useState(() => getQueryParams());
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
   const [page, setPage] = useState(1);
 
-  // Load query params on mount and on URL change (popstate)
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handlePageClick = (num) => setPage(num);
+  const handlePrevious = () => page > 1 && setPage(page - 1);
+  const handleNext = () => page < totalPages && setPage(page + 1);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (page <= 4) {
+        pages.push(1, 2, 3, 4, 5, "...", totalPages);
+      } else if (page >= totalPages - 3) {
+        pages.push(
+          1,
+          "...",
+          totalPages - 4,
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
+      } else {
+        pages.push(1, "...", page - 1, page, page + 1, "...", totalPages);
+      }
+    }
+    return pages;
+  };
+
   useEffect(() => {
     const onPopState = () => {
       setParams(getQueryParams());
-      setPage(1); // Reset page on URL change
+      setPage(1);
     };
 
     window.addEventListener("popstate", onPopState);
 
-    // initial load
     setParams(getQueryParams());
 
     return () => window.removeEventListener("popstate", onPopState);
@@ -58,6 +83,7 @@ export default function GenreMoviesPage() {
         );
         const jsonData = await response.json();
         setMovies(jsonData.results || []);
+        setTotalPages(jsonData.total_pages || 1);
       } catch (error) {
         console.error("Error fetching movies:", error);
       }
@@ -87,7 +113,7 @@ export default function GenreMoviesPage() {
 
   const onGenreClick = (genre) => {
     setPage(1);
-    // Push new URL without reload
+
     const newUrl = `/genre/${genre.id}?genreId=${
       genre.id
     }&genreName=${encodeURIComponent(genre.name)}`;
@@ -99,39 +125,48 @@ export default function GenreMoviesPage() {
     <>
       <NavbarSection />
 
-      <div className="px-4 sm:px-6 lg:px-10 py-8 max-w-screen-xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-10">
-          <div className="flex flex-col pt-8 md:pt-32 w-full md:w-[387px]">
-            <h1 className="text-3xl md:text-4xl font-semibold pt-12 md:pt-0">
+      <main className="px-4 sm:px-6 lg:px-10 py-8 max-w-screen-xl mx-auto min-h-screen">
+        <div className="flex flex-col md:flex-row gap-12 pt-[52px]">
+          {/* Sidebar */}
+          <aside className="w-full md:w-[360px]  top-24 self-start">
+            <h1 className="text-3xl md:text-4xl font-semibold mb-6">
               Search Filter
             </h1>
-            <div className="pt-8">
-              <h2 className="text-2xl font-semibold mb-1">Genres</h2>
-              <p className="text-base font-normal">
-                See lists of movies by genre
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-2">Genres</h2>
+              <p className="text-base font-normal mb-4">
+                Browse movies by genre
               </p>
-            </div>
-            <div className="flex flex-wrap gap-3 pt-5">
-              {genres.map((genre) => (
-                <div
-                  key={genre.id}
-                  onClick={() => onGenreClick(genre)}
-                  className="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-1 text-sm font-medium cursor-pointer hover:backdrop-brightness-50 transition-all dark:hover:bg-gray-500"
-                >
-                  {genre.name} ▶︎
-                </div>
-              ))}
-            </div>
-          </div>
+              <div className="flex flex-wrap gap-3">
+                {genres.map((genre) => (
+                  <button
+                    key={genre.id}
+                    onClick={() => onGenreClick(genre)}
+                    className={`flex items-center gap-1 border rounded-md px-4 py-2 text-sm font-medium transition
+                      ${
+                        genreId == genre.id
+                          ? "bg-gray-800 text-white border-gray-800"
+                          : "border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      }`}
+                    aria-pressed={genreId == genre.id}
+                  >
+                    {genre.name} <span className="text-xs">▶︎</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </aside>
+          <div className="h-[1852px] w-[2px] bg-[#f4f4f5] max-sm:hidden"></div>
 
-          <div className="hidden md:block w-px bg-[#E4E4E7] h-[1520px] self-center"></div>
-
-          <div className="pt-12 md:pt-36 flex-1">
+          {/* Main content */}
+          <section className="flex-1">
             <h1 className="text-2xl font-bold mb-6">
-              {`${movies.length} titles in "${genreName}"`}
+              {movies.length} titles in{" "}
+              <span className="italic">"{genreName}"</span>
             </h1>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-6">
+            <div className="grid  grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mb-10 max-w-full">
               {movies.slice(0, 20).map((movie) => (
                 <GenreMovieCard
                   key={movie.id}
@@ -142,26 +177,55 @@ export default function GenreMoviesPage() {
                 />
               ))}
             </div>
-          </div>
-        </div>
 
-        <div className="flex justify-end gap-4 mt-6">
-          <button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-          >
-            Prev ◀︎
-          </button>
-          <span className="px-4 py-2">Page {page}</span>
-          <button
-            onClick={() => setPage((prev) => prev + 1)}
-            className="px-4 py-2 bg-gray-300 rounded"
-          >
-            Next ►
-          </button>
+            {/* Pagination */}
+            <nav
+              aria-label="Pagination"
+              className="flex flex-wrap justify-center sm:justify-end gap-2"
+            >
+              <button
+                className="w-[90px] h-[36px] text-sm sm:text-base cursor-pointer border rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+                onClick={handlePrevious}
+                disabled={page === 1}
+              >
+                ◀︎ Previous
+              </button>
+
+              {getPageNumbers().map((num, index) =>
+                num === "..." ? (
+                  <span
+                    key={`dots-${index}`}
+                    className="w-[36px] h-[36px] flex items-center justify-center text-sm select-none"
+                  >
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={num}
+                    className={`w-[36px] h-[36px] text-sm rounded border transition-colors ${
+                      page === num
+                        ? "bg-gray-700 text-white font-semibold"
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}
+                    onClick={() => handlePageClick(num)}
+                    aria-current={page === num ? "page" : undefined}
+                  >
+                    {num}
+                  </button>
+                )
+              )}
+
+              <button
+                className="w-[90px] h-[36px] text-sm sm:text-base cursor-pointer border rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+                onClick={handleNext}
+                disabled={page === totalPages}
+              >
+                Next ▶︎
+              </button>
+            </nav>
+          </section>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </>

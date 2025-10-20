@@ -216,7 +216,7 @@ export default function MovieDetail() {
         {loadingMoreLikeThis ? (
           <p className="text-center px-4">Loading similar movies...</p>
         ) : moreLikeThisMovies.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 sm:flex sm:gap-4 justify-items-start sm:overflow-x-auto max-w-[1277px] max-sm:w-[375px]">
+          <div className="grid grid-cols-2 gap-4 overflow-y-hidden sm:flex sm:gap-4 justify-items-start sm:overflow-x-auto max-w-[1277px] max-sm:w-[375px]">
             {moreLikeThisMovies.map((movie) => (
               <MovieCard
                 key={movie.id}

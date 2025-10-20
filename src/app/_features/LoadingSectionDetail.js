@@ -17,7 +17,7 @@ export function LoadingDetail() {
     <div className="px-4 sm:px-10">
       <NavbarSection />
 
-      <div className="flex flex-col sm:flex-row justify-between pt-12 gap-4">
+      <div className="flex flex-col sm:flex-row justify-around pt-12 gap-4">
         <div className="flex flex-col gap-1">
           <div className="w-[180px] sm:w-[211px] h-10 bg-[#F4F4F5] rounded-[8px]"></div>
           <div className="w-[200px] sm:w-[237px] h-7 bg-[#F4F4F5] rounded-[8px]"></div>
@@ -30,24 +30,32 @@ export function LoadingDetail() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center pt-8">
+      <div className="flex flex-col justify-center sm:flex-row gap-4 sm:gap-8  pt-8">
         <div className="w-full sm:w-[290px] h-[428px] bg-[#F4F4F5] rounded-[8px]"></div>
         <div className="w-full sm:w-[760px] h-[428px] bg-[#F4F4F5] rounded-[8px]"></div>
       </div>
 
-      <div className="flex flex-col gap-1 pt-4">
+      <div className="flex flex-col justify-center pl-[200px] gap-1 pt-4 max-sm:pl-[0px]">
         <div className="w-full sm:w-[1080px] h-[22px] bg-[#F4F4F5] rounded-[8px]"></div>
         <div className="w-4/5 sm:w-[700px] h-[22px] bg-[#F4F4F5] rounded-[8px]"></div>
       </div>
 
-      <div className="flex flex-wrap gap-4 pt-8">
+      <div className="flex flex-wrap gap-4 pl-[200px] justify-start pt-8 max-sm:pl-[0px]">
         <div className="w-[100px] h-[28px] bg-[#F4F4F5] rounded-[8px]"></div>
         <div className="w-[130px] h-[28px] bg-[#F4F4F5] rounded-[8px]"></div>
       </div>
 
-      <div className="flex flex-col gap-6 pt-8">
+      <div className="flex flex-col justify-center pl-[200px] gap-6 pt-8 max-sm:pl-[0px]">
         <div className="h-[9px] bg-[#f4f4f5] rounded-[8px] w-full"></div>
+        <div className="flex flex-wrap gap-4 justify-start pt-8">
+          <div className="w-[100px] h-[28px] bg-[#F4F4F5] rounded-[8px]"></div>
+          <div className="w-[130px] h-[28px] bg-[#F4F4F5] rounded-[8px]"></div>
+        </div>
         <div className="h-[9px] bg-[#f4f4f5] rounded-[8px] w-full"></div>
+        <div className="flex flex-wrap gap-4 justify-start pt-8">
+          <div className="w-[100px] h-[28px] bg-[#F4F4F5] rounded-[8px]"></div>
+          <div className="w-[130px] h-[28px] bg-[#F4F4F5] rounded-[8px]"></div>
+        </div>
         <div className="h-[9px] bg-[#f4f4f5] rounded-[8px] w-full"></div>
       </div>
 

@@ -11,19 +11,21 @@ export const GenreMovieCard = ({ image, title, movieId, movie }) => {
   };
 
   return (
-    <div
-      className="cursor-pointer w-full max-w-[190px] mx-auto"
-      onClick={handleMovieClick}
-    >
-      <img
-        className="w-full h-[244px] rounded-t-[8px] hover:brightness-50 transition-opacity object-cover max-sm:w-[157px]  max-sm:grid-cols-2 max-sm:grid-rows-2"
-        src={image}
-        alt={title}
-      />
-      <div className=" rounded-b-[8px] w-full h-[97px] max-sm:w-[157px] bg-[#f4f4f5] dark:bg-[#27272A]">
-        <div className="pt-[8px] pl-[8px]">
-          <RatingIcon2 />
-          <h3 className="font-normal text-[16px] truncate">{title}</h3>
+    <div className="w-[150px]">
+      <div
+        className="cursor-pointer w-[165px] max-w-[230px] mx-auto"
+        onClick={handleMovieClick}
+      >
+        <img
+          className="w-full h-[244px] rounded-t-[8px] hover:brightness-50 transition-opacity object-cover max-sm:w-[157px]  max-sm:grid-cols-2 max-sm:grid-rows-2"
+          src={image}
+          alt={title}
+        />
+        <div className=" rounded-b-[8px] w-full h-[97px] max-sm:w-[157px] bg-[#f4f4f5] dark:bg-[#27272A]">
+          <div className="pt-[8px] pl-[8px]">
+            <RatingIcon2 />
+            <h3 className="font-normal text-[16px] truncate">{title}</h3>
+          </div>
         </div>
       </div>
     </div>

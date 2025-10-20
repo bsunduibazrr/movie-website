@@ -4,7 +4,6 @@ import { FooterSection } from "../_features/FooterSection";
 import { NavbarSection } from "../_features/NavbarSection";
 import { LoadingSection } from "../_features/LoadingSection";
 import { TitleSortToprated } from "../_component/TitleSortComponentToprated";
-
 import { NextPreviousComponentToprated } from "../_component/NextPreviousComponentToprated";
 
 const API_BASE = "https://api.themoviedb.org/3/movie/top_rated";

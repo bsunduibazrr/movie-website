@@ -71,7 +71,7 @@ export default function Home() {
     <div className="w-[1440px] m-auto max-sm:w-[375px]">
       <NavbarSection darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
 
-      <div className="pt-[52px]">
+      <div className="pt-[52px] cursor-pointer">
         <TitleSortUpcoming title={"Upcoming"} />
       </div>
       <NextPreviousComponentUpcoming />

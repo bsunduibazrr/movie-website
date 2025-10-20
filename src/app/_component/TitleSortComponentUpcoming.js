@@ -19,11 +19,11 @@ export const TitleSortUpcoming = (props) => {
         className="flex gap-1 items-center mt-2 sm:mt-0"
         onClick={handleMovieClick}
       >
-        <button className="text-sm sm:text-base font-medium hover:underline">
+        <button className="text-sm sm:text-base font-medium hover:underline cursor-pointer">
           {seemore}
         </button>
 
-        <button className="hover:underline">{icon}</button>
+        <button className="hover:underline cursor-pointer">{icon}</button>
       </div>
     </div>
   );

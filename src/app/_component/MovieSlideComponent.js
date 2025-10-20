@@ -11,7 +11,7 @@ export const MovieCard = ({ image, title, movieId }) => {
   };
 
   return (
-    <div className="flex items-center max-sm:w-[375px] max-sm:pl-[10px]">
+    <div className="flex items-center max-sm:w-[150px] max-sm:pl-[10px]">
       <div
         className="flex justify-center sm:justify-start"
         onClick={handleMovieClick}
