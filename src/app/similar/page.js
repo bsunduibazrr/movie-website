@@ -17,16 +17,16 @@ const options = {
 };
 
 export default function MoreLikeThis({ params }) {
-  const { query, language = "en-US", page = "1" } = params;
+  const router = useRouter();
+
+  const [query, language = "en-US", page = "1"] = params.slug || [];
 
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pageNum, setPageNum] = useState(parseInt(page, 10));
+  const [pageNum, setPageNum] = useState(parseInt(page, 10) || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [genres, setGenres] = useState([]);
-
-  const router = useRouter();
 
   useEffect(() => {
     if (!query) {
@@ -34,8 +34,8 @@ export default function MoreLikeThis({ params }) {
       return;
     }
 
-    setPageNum(parseInt(page, 10));
-    fetchMovies(parseInt(page, 10));
+    setPageNum(parseInt(page, 10) || 1);
+    fetchMovies(parseInt(page, 10) || 1);
   }, [query, language, page]);
 
   const fetchMovies = async (pageNum) => {

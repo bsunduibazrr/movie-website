@@ -163,7 +163,7 @@ export default function GenreMoviesPage() {
           <section className="flex-1">
             <h1 className="text-2xl font-bold mb-6">
               {movies.length} titles in{" "}
-              <span className="italic">"{genreName}"</span>
+              <span className="italic">&quot;{genreName}&quot;</span>
             </h1>
 
             <div className="grid  grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mb-10 max-w-full">

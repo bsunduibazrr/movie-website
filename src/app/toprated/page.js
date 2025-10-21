@@ -33,8 +33,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getData(page);
-  }, [page]);
+    getData();
+  }, []);
 
   if (loading) return <LoadingSection />;
   if (!loading && typeof topratedMoviesData === "undefined") {
